@@ -15,7 +15,7 @@ require 'openssl'
 
 module Utils
   module CloudForms
-    class Provider
+    class InfraProvider
       def self.add(cfme_ip, provider_params, deployment)
         Rails.logger.debug "Adding the RHEV provider at #{provider_params[:ip]} to the CloudForms VM at #{cfme_ip}"
 
@@ -25,8 +25,8 @@ module Utils
 
         # 20150825 jesusr - use cfme_admin_password from deployment
         agent.post("https://#{cfme_ip}/dashboard/authenticate?button=login",
-                   { "user_name" => "admin",
-                     "user_password" => deployment.cfme_admin_password })
+                   "user_name" => "admin",
+                   "user_password" => deployment.cfme_admin_password)
 
         # The referer is VERY IMPORTANT in manageIQ
         # If 'agent.page.uri' is removed in below request it will not function
@@ -71,7 +71,7 @@ module Utils
 
       def self.get_host_links(cfme_ip, agent)
         agent.get("https://#{cfme_ip}/host/show_list", [], agent.page.uri)
-          .links_with(:href => %r'/host/show/1r', :text => "\n\t\t\t\t\n\t\t\t\t")
+          .links_with(:href => %r{/host/show/1r}, :text => "\n\t\t\t\t\n\t\t\t\t")
       end
 
       def self.get_provider_hosts(cfme_ip, agent, provider_params)
@@ -87,7 +87,7 @@ module Utils
 
       def self.add_host_credentials(host_link, cfme_ip, agent, provider_params, submit_headers)
         host = agent.get("https://#{cfme_ip}/#{host_link.uri}", [], agent.page.uri)
-        host_id = host.links_with(:href => %r'/?display=main').first.uri.to_s.match(%r'([0-9]+)').to_s
+        host_id = host.links_with(:href => %r{/?display=main}).first.uri.to_s.match(/([0-9]+)/).to_s
         host_edit = agent.get("https://#{cfme_ip}/host/edit/#{host_id}", [], agent.page.uri)
 
         host_edit_form = host_edit.form
