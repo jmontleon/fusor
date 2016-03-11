@@ -29,11 +29,11 @@ module Fusor
         ::Fusor.log.debug "finding all"
         @subscriptions = Subscription.all
       end
-      render :json => @subscriptions, :each_serializer => Fusor::SubscriptionSerializer
+      render :json => @subscriptions, :each_serializer => Fusor::SubscriptionSerializer, :serializer => RootArraySerializer
     end
 
     def create
-      @subscription = Fusor::Subscription.new(params[:subscription])
+      @subscription = Fusor::Subscription.new(subscription_params)
       if @subscription.save
         render :json => @subscription, :serializer => Fusor::SubscriptionSerializer
       else
@@ -47,7 +47,7 @@ module Fusor
     end
 
     def update
-      @subscription = Fusor::Subscription.find(params[:id])
+      @subscription = Fusor::Subscription.find(subscription_params)
       if @subscription.update_attributes(params[:subscription])
         render :json => @subscription, :serializer => Fusor::SubscriptionSerializer
       else
@@ -98,5 +98,13 @@ module Fusor
       render json: {manifest_file: temp_file.path}, status: 200
     end
 
+    private
+
+    def subscription_params
+      params.require(:subscription).permit(:contract_number, :product_name, :quantity_to_add, :quantity_attached,
+                                           :start_date, :end_date, :total_quantity, :source, :deployment_id)
+    end
+
   end
 end
+

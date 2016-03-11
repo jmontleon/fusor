@@ -32,7 +32,7 @@ module Actions
         def run(event = nil)
           host = ::Host::Base.find(input[:host_id])
           ::Fusor.log.info "Waiting for host #{host.name}'s deployment to complete..."
-          if host.is_a?(::Host::Managed) && host.error?
+          if host.is_a?(::Host::Managed) && host.global_status > 0
             fail _("Failed to provision host '%s'.") % host.name
           end
 
