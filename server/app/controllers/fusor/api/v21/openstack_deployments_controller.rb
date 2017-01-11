@@ -113,7 +113,7 @@ module Fusor
       return render json: {errors: @openstack_deployment.errors}, status: 422 unless @openstack_deployment.valid?
 
       undercloud_handle.edit_plan_environments('overcloud', {'environments/puppet-ceph-external.yaml' => @openstack_deployment.external_ceph_storage,
-                                                             'environments/rhel-registration.yaml' => true,
+                                                             'environments/rhel-registration.yaml' => false,
                                                              'environments/enable-tls.yaml' => true,
                                                              'environments/inject-trust-anchor.yaml' => true })
       ssl_params = build_openstack_ssl_params
