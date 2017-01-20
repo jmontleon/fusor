@@ -37,7 +37,7 @@ module Actions
               cfme_addresses = [deployment.cfme_rhv_address, deployment.cfme_osp_address].compact
               @success = false
               @retry = false
-              @retries = 30
+              @retries = 60
               @io = StringIO.new
 
               cfme_addresses.each do |cfme_address|
